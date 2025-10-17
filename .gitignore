@@ -21,6 +21,13 @@ ENV/
 logs/
 *.log
 
+# Outputs (LinkedIn posts)
+outputs/json/*.json
+outputs/text/batch_*
+outputs/combined/*.txt
+!outputs/README.md
+!outputs/.gitkeep
+
 # OS
 .DS_Store
 Thumbs.db

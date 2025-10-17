@@ -3,12 +3,13 @@ n8n Webhook Handler for AI Happenings
 Provides REST API endpoints for n8n integration
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import asyncio
 import os
 from main import AIHappenings
 from datetime import datetime
+from utils.post_storage import PostStorage
 
 
 # Initialize Flask app
@@ -331,6 +332,85 @@ def get_top_posts():
         }), 500
 
 
+@app.route('/get-saved-posts', methods=['GET'])
+def get_saved_posts():
+    """
+    Get the most recent saved posts.
+
+    Query Parameters:
+        format: json|text|combined (default: json)
+
+    Returns:
+        JSON response with saved posts or file download
+    """
+    try:
+        storage = PostStorage()
+        format_type = request.args.get('format', 'json')
+
+        if format_type == 'json':
+            latest_file = storage.get_latest_posts('json')
+            if not latest_file:
+                return jsonify({
+                    "success": False,
+                    "error": "No saved posts found"
+                }), 404
+
+            posts_data = storage.load_posts_from_json(latest_file)
+            return jsonify({
+                "success": True,
+                "data": posts_data
+            }), 200
+
+        elif format_type == 'combined':
+            latest_file = storage.get_latest_posts('combined')
+            if not latest_file:
+                return jsonify({
+                    "success": False,
+                    "error": "No saved posts found"
+                }), 404
+
+            return send_file(latest_file, as_attachment=True)
+
+        else:
+            return jsonify({
+                "success": False,
+                "error": f"Invalid format: {format_type}. Use json|text|combined"
+            }), 400
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.route('/list-saved-runs', methods=['GET'])
+def list_saved_runs():
+    """
+    List all saved post runs.
+
+    Returns:
+        JSON response with list of all saved runs
+    """
+    try:
+        storage = PostStorage()
+        runs = storage.list_saved_runs()
+        stats = storage.get_storage_stats()
+
+        return jsonify({
+            "success": True,
+            "runs": runs,
+            "stats": stats,
+            "timestamp": datetime.now().isoformat()
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
     print(f"""
@@ -345,7 +425,9 @@ if __name__ == '__main__':
     ║  ├─ POST /scrape-only          - Scrape articles only   ║
     ║  ├─ POST /analyze-articles     - Analyze articles       ║
     ║  ├─ POST /prioritize-articles  - Prioritize articles    ║
-    ║  └─ POST /get-top-posts        - Get LinkedIn posts     ║
+    ║  ├─ POST /get-top-posts        - Get LinkedIn posts     ║
+    ║  ├─ GET  /get-saved-posts      - Get saved posts        ║
+    ║  └─ GET  /list-saved-runs      - List all saved runs    ║
     ║                                                          ║
     ║  n8n Webhook URL:                                        ║
     ║  http://localhost:{port}/run-pipeline                    ║

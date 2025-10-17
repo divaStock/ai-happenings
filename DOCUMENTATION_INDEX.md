@@ -67,7 +67,23 @@
 
 ---
 
-### 3. Cost Management
+### 3. Storage & Data Management
+
+#### **[STORAGE_GUIDE.md](STORAGE_GUIDE.md)** - Post Storage
+**When to use:** Managing saved LinkedIn posts
+**Contains:**
+- Storage directory structure
+- File formats (JSON, text)
+- Retrieving saved posts
+- Storage management
+- n8n integration examples
+- Cleanup and maintenance
+
+**Best for:** Understanding where posts are saved and how to access them
+
+---
+
+### 4. Cost Management
 
 #### **[ACTION_BALANCE_GUIDE.md](ACTION_BALANCE_GUIDE.md)** - Cost Tracking
 **When to use:** Understanding and managing costs
@@ -84,7 +100,7 @@
 
 ---
 
-### 4. Deployment
+### 5. Deployment
 
 #### **[COMPLETE_SETUP.md](COMPLETE_SETUP.md)** - Full Deployment Guide
 **When to use:** Comprehensive setup and deployment
@@ -115,7 +131,7 @@
 
 ---
 
-### 5. Reference Materials
+### 6. Reference Materials
 
 #### **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Command Cheat Sheet
 **When to use:** Quick lookup of commands and configs
@@ -148,7 +164,7 @@
 
 ---
 
-### 6. Project Information
+### 7. Project Information
 
 #### **[PROJECT_SUMMARY.txt](PROJECT_SUMMARY.txt)** - Text Summary
 **When to use:** Quick text-based overview
@@ -200,6 +216,10 @@
 ### "I need to integrate with n8n"
 1. **[N8N_INTEGRATION_GUIDE.md](N8N_INTEGRATION_GUIDE.md)** - Complete n8n guide
 2. **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - API endpoint reference
+
+### "I want to access saved LinkedIn posts"
+1. **[STORAGE_GUIDE.md](STORAGE_GUIDE.md)** - Complete storage guide
+2. **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick commands
 
 ### "I want to monitor and control costs"
 1. **[ACTION_BALANCE_GUIDE.md](ACTION_BALANCE_GUIDE.md)** - Cost tracking
@@ -377,9 +397,10 @@
 - `Dockerfile` - Docker image
 - `docker-compose.yml` - Docker orchestration
 
-### Documentation Files (9)
+### Documentation Files (11)
 - `README.md` - Main documentation
 - `QUICK_START.md` - 5-minute setup
+- `STORAGE_GUIDE.md` - Post storage guide
 - `N8N_INTEGRATION_GUIDE.md` - n8n workflows
 - `ACTION_BALANCE_GUIDE.md` - Cost tracking
 - `COMPLETE_SETUP.md` - Full deployment

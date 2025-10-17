@@ -11,6 +11,7 @@ from agentbill import AgentBill
 from scrapers.web_scraper import WebScraper
 from analyzers.ai_analyzer import AIAnalyzer
 from prioritizers.article_prioritizer import ArticlePrioritizer
+from utils.post_storage import PostStorage
 
 
 class AIHappenings:
@@ -36,6 +37,9 @@ class AIHappenings:
         self.scraper = WebScraper(self.agentbill)
         self.analyzer = AIAnalyzer(config["openai_api_key"], self.agentbill)
         self.prioritizer = ArticlePrioritizer(self.agentbill)
+
+        # Initialize post storage
+        self.storage = PostStorage(output_dir=config.get("output_dir", "outputs"))
 
     async def run_pipeline(self) -> Dict:
         """
@@ -108,6 +112,24 @@ class AIHappenings:
             pipeline_end = datetime.now()
             duration = (pipeline_end - pipeline_start).total_seconds()
 
+            # Format posts for output
+            formatted_posts = [self._format_article_output(article) for article in top_articles]
+
+            # Save posts to persistent storage
+            print("\n💾 Saving LinkedIn posts to storage...")
+            storage_result = self.storage.save_posts(
+                posts=formatted_posts,
+                metadata={
+                    "duration_seconds": duration,
+                    "articles_scraped": len(articles),
+                    "articles_analyzed": len(analyzed_articles),
+                    "customer_id": self.config.get("customer_id")
+                }
+            )
+            print(f"   ✓ Saved to JSON: {storage_result['json_file']}")
+            print(f"   ✓ Saved to combined text: {storage_result['combined_text_file']}")
+            print(f"   ✓ Saved {len(storage_result['text_files'])} individual text files")
+
             result = {
                 "success": True,
                 "timestamp": pipeline_start.isoformat(),
@@ -118,9 +140,10 @@ class AIHappenings:
                     "articles_prioritized": len(prioritized_articles),
                     "top_articles_count": len(top_articles)
                 },
-                "top_articles": [self._format_article_output(article) for article in top_articles],
+                "top_articles": formatted_posts,
                 "summary_report": summary_report,
-                "priority_report": priority_report
+                "priority_report": priority_report,
+                "storage": storage_result
             }
 
             # Track pipeline completion
