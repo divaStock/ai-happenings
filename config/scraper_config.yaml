@@ -1,0 +1,175 @@
+# AI Happenings Scraper Configuration
+# Configure research topics, keywords, and sources
+
+# Research Topics Configuration
+research_topics:
+  primary_topic: "Agentic Commerce and AI Marketplaces"
+  description: "Focus on autonomous AI agents in commerce and AI-powered marketplace technologies"
+
+  # Primary Keywords (high priority - must match)
+  primary_keywords:
+    - "agentic commerce"
+    - "ai marketplace"
+    - "ai marketplaces"
+    - "autonomous commerce"
+    - "agent economy"
+    - "commerce agents"
+    - "shopping agents"
+    - "ai shopping assistant"
+
+  # Secondary Keywords (medium priority - boost relevance)
+  secondary_keywords:
+    - "ai agents"
+    - "autonomous agents"
+    - "intelligent agents"
+    - "multi-agent systems"
+    - "agent-based commerce"
+    - "conversational commerce"
+    - "voice commerce"
+    - "ai-powered shopping"
+    - "personalized shopping ai"
+    - "ai recommendation engine"
+
+  # Tertiary Keywords (related topics - nice to have)
+  tertiary_keywords:
+    - "e-commerce automation"
+    - "retail ai"
+    - "commerce automation"
+    - "intelligent commerce"
+    - "ai retail"
+    - "automated purchasing"
+    - "smart shopping"
+    - "ai buyer"
+    - "procurement ai"
+    - "supply chain ai"
+
+  # Technology Keywords (technical aspects)
+  technology_keywords:
+    - "llm commerce"
+    - "gpt commerce"
+    - "ai api marketplace"
+    - "agent orchestration"
+    - "multi-agent framework"
+    - "langchain commerce"
+    - "autogpt marketplace"
+
+  # Business Keywords (business impact)
+  business_keywords:
+    - "commerce platform"
+    - "marketplace technology"
+    - "b2b marketplace"
+    - "b2c automation"
+    - "digital commerce"
+    - "online marketplace"
+
+# News Sources Configuration
+news_sources:
+  # Technology News Sites
+  tech_sites:
+    - name: "TechCrunch AI"
+      url: "https://techcrunch.com/category/artificial-intelligence/"
+      type: "web"
+      selector: "article"
+      priority: "high"
+
+    - name: "VentureBeat AI"
+      url: "https://venturebeat.com/category/ai/"
+      type: "web"
+      selector: "article"
+      priority: "high"
+
+    - name: "The Verge AI"
+      url: "https://www.theverge.com/ai-artificial-intelligence"
+      type: "web"
+      selector: "article"
+      priority: "high"
+
+    - name: "Ars Technica AI"
+      url: "https://arstechnica.com/ai/"
+      type: "web"
+      selector: "article"
+      priority: "medium"
+
+    - name: "Wired AI"
+      url: "https://www.wired.com/tag/artificial-intelligence/"
+      type: "web"
+      selector: "article"
+      priority: "medium"
+
+    - name: "MIT Technology Review"
+      url: "https://www.technologyreview.com/topic/artificial-intelligence/"
+      type: "web"
+      selector: "article"
+      priority: "high"
+
+  # AI-Specific News Sites
+  ai_sites:
+    - name: "AI News"
+      url: "https://www.artificialintelligence-news.com/"
+      type: "web"
+      selector: "article"
+      priority: "medium"
+
+    - name: "Analytics India Magazine"
+      url: "https://analyticsindiamag.com/category/artificial-intelligence/"
+      type: "web"
+      selector: "article"
+      priority: "medium"
+
+    - name: "VentureBeat AI RSS"
+      url: "https://venturebeat.com/category/ai/feed/"
+      type: "rss"
+      priority: "high"
+
+    - name: "TechCrunch AI RSS"
+      url: "https://techcrunch.com/category/artificial-intelligence/feed/"
+      type: "rss"
+      priority: "high"
+
+# Scraping Configuration
+scraping_settings:
+  # Request settings
+  timeout: 30
+  delay_between_requests: 1.5  # seconds
+  max_retries: 3
+  retry_delay: 5  # seconds
+
+  # Content limits
+  max_articles_per_source: 30
+  max_content_length: 5000  # characters
+  min_article_length: 100  # characters
+
+  # Headers
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  accept_language: "en-US,en;q=0.9"
+
+  # Relevance filtering
+  min_relevance_score: 0.1  # 0.0 to 1.0 (lowered to capture more AI-related articles)
+  require_primary_keyword: false  # If true, must have at least one primary keyword
+
+  # RSS settings
+  rss_enabled: true
+  rss_max_items: 50
+
+# Keyword Scoring Weights
+scoring_weights:
+  primary_keyword: 10.0
+  secondary_keyword: 5.0
+  tertiary_keyword: 2.0
+  technology_keyword: 3.0
+  business_keyword: 2.0
+  title_multiplier: 2.0  # Keywords in title are worth more
+
+# Output Configuration
+output_settings:
+  include_low_relevance: false  # Include articles below min_relevance_score
+  max_articles_output: 50
+  deduplicate: true  # Remove duplicate articles
+  sort_by_relevance: true
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  log_scraping_attempts: true
+  log_failed_sources: true
+  log_relevance_scores: true
