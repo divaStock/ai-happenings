@@ -1,0 +1,21 @@
+# AI Happenings Requirements
+
+# Core Dependencies
+flask==3.1.0
+flask-cors==5.0.0
+python-dotenv==1.1.1
+
+# Web Scraping
+httpx==0.28.1
+beautifulsoup4==4.12.3
+lxml==5.3.0
+
+# AI & OpenAI
+openai==2.3.0
+
+# AgentBill SDK (from TestPyPI)
+# Install with: pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple agentbill
+agentbill==1.0.1
+
+# Optional: For production deployment
+gunicorn==23.0.0
