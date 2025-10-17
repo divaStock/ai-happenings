@@ -37,6 +37,31 @@ class WebScraper:
                 "name": "MIT Technology Review",
                 "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
                 "selector": "article"
+            },
+            {
+                "name": "The Verge AI",
+                "url": "https://www.theverge.com/ai-artificial-intelligence",
+                "selector": "article"
+            },
+            {
+                "name": "Ars Technica AI",
+                "url": "https://arstechnica.com/ai/",
+                "selector": "article"
+            },
+            {
+                "name": "Wired AI",
+                "url": "https://www.wired.com/tag/artificial-intelligence/",
+                "selector": "article"
+            },
+            {
+                "name": "AI News",
+                "url": "https://www.artificialintelligence-news.com/",
+                "selector": "article"
+            },
+            {
+                "name": "Analytics India Magazine",
+                "url": "https://analyticsindiamag.com/category/artificial-intelligence/",
+                "selector": "article"
             }
         ]
         self.keywords = [
@@ -75,8 +100,20 @@ class WebScraper:
                 }
             )
 
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                response = await client.get(source["url"])
+            # Add custom headers to avoid bot detection and rate limiting
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.5",
+                "Accept-Encoding": "gzip, deflate",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1"
+            }
+
+            async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+                # Add small delay between requests to avoid rate limiting
+                await asyncio.sleep(1)
+                response = await client.get(source["url"], headers=headers)
                 response.raise_for_status()
 
                 soup = BeautifulSoup(response.text, 'html.parser')
@@ -101,6 +138,23 @@ class WebScraper:
                 }
             )
 
+        except httpx.HTTPStatusError as e:
+            duration_ms = int((time.time() - start_time) * 1000)
+
+            # Track scraping error
+            self.agentbill.track_signal(
+                event_name="scraping_failed",
+                revenue=0,
+                data={
+                    "source": source["name"],
+                    "error": str(e),
+                    "status_code": e.response.status_code if hasattr(e, 'response') else None,
+                    "duration_ms": duration_ms
+                }
+            )
+            print(f"⚠️  Error scraping {source['name']}: HTTP {e.response.status_code if hasattr(e, 'response') else 'error'} - {e}")
+            print(f"   Continuing with other sources...")
+
         except Exception as e:
             duration_ms = int((time.time() - start_time) * 1000)
 
@@ -114,7 +168,8 @@ class WebScraper:
                     "duration_ms": duration_ms
                 }
             )
-            print(f"Error scraping {source['name']}: {e}")
+            print(f"⚠️  Error scraping {source['name']}: {e}")
+            print(f"   Continuing with other sources...")
 
         return articles
 
@@ -195,9 +250,21 @@ class WebScraper:
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         all_articles = []
-        for result in results:
+        successful_sources = 0
+        failed_sources = 0
+
+        for i, result in enumerate(results):
             if isinstance(result, list):
                 all_articles.extend(result)
+                successful_sources += 1
+            else:
+                failed_sources += 1
+
+        print(f"\n📊 Scraping Summary:")
+        print(f"   ✓ Successful sources: {successful_sources}/{len(self.sources)}")
+        if failed_sources > 0:
+            print(f"   ⚠️  Failed sources: {failed_sources}/{len(self.sources)}")
+        print(f"   📰 Total articles found: {len(all_articles)}")
 
         duration_ms = int((time.time() - start_time) * 1000)
 
