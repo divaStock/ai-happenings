@@ -7,9 +7,13 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import asyncio
 import os
+from dotenv import load_dotenv
 from main import AIHappenings
 from datetime import datetime
 from utils.post_storage import PostStorage
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Initialize Flask app

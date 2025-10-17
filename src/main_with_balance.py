@@ -7,12 +7,16 @@ import asyncio
 import os
 from datetime import datetime
 from typing import Dict
+from dotenv import load_dotenv
 from agentbill import AgentBill
 from scrapers.web_scraper import WebScraper
 from analyzers.ai_analyzer import AIAnalyzer
 from prioritizers.article_prioritizer import ArticlePrioritizer
 from utils.action_tracker import ActionBalanceTracker, UsageLimiter
 from utils.post_storage import PostStorage
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 class AIHappeningsWithBalance:
